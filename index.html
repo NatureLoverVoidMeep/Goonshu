@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape from Goon Shu</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="hud">
+      <h1>Escape from Goon Shu</h1>
+      <div class="stats">
+        <span>Level: <strong id="levelCount">1</strong></span>
+        <span>Hits: <strong id="hitCount">0</strong>/3</span>
+        <span>Time: <strong id="timeAlive">0.0</strong>s</span>
+      </div>
+      <p class="instructions">Move with <kbd>WASD</kbd> or <kbd>Arrow Keys</kbd>. Press <kbd>R</kbd> to restart. Reach the green zone to escape.</p>
+    </header>
+
+    <section class="canvas-wrap">
+      <canvas id="gameCanvas" width="960" height="540" aria-label="2D escape game"></canvas>
+      <div id="overlay" class="overlay hidden"></div>
+    </section>
+
+    <footer class="controls">
+      <button id="restartBtn" type="button">Restart</button>
+      <p id="statusText">Run!</p>
+    </footer>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
