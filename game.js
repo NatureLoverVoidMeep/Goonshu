@@ -124,6 +124,9 @@ function spawnWhiteSplash() {
 
   setTimeout(() => {
     if (!overlay.children.length) overlay.classList.add('hidden');
+    if (!overlay.children.length) {
+      overlay.classList.add('hidden');
+    }
   }, 1400);
 }
 
@@ -160,6 +163,7 @@ function handleCatch() {
   if (hits >= 3) {
     playing = false;
     statusText.textContent = `You were caught 3 times on level ${level}. You lose.`;
+    statusText.textContent = 'You were caught 3 times. You lose.';
     return;
   }
 
@@ -222,6 +226,8 @@ function updateEnemyPhase(dt) {
 
     return true;
   });
+  playing = false;
+  statusText.textContent = `Escaped in ${survivedSeconds.toFixed(1)}s. You win!`;
 }
 
 function update(dt) {
@@ -244,6 +250,10 @@ function update(dt) {
   }
 
   moveEntity(player, dx * player.speed * dt, dy * player.speed * dt);
+  player.x += dx * player.speed * dt;
+  player.y += dy * player.speed * dt;
+  player.x = clamp(player.x, player.size / 2, world.width - player.size / 2);
+  player.y = clamp(player.y, player.size / 2, world.height - player.size / 2);
 
   const chaseX = player.x - enemy.x;
   const chaseY = player.y - enemy.y;
@@ -255,6 +265,11 @@ function update(dt) {
   if (isColliding(player, enemy)) {
     handleCatch();
     return;
+  enemy.x += (chaseX / chaseLen) * enemy.speed * dt;
+  enemy.y += (chaseY / chaseLen) * enemy.speed * dt;
+
+  if (isColliding(player, enemy)) {
+    handleCatch();
   }
 
   const escaped =
@@ -263,6 +278,9 @@ function update(dt) {
     player.y < escapeZone.y + escapeZone.height;
 
   if (escaped) handleEscape();
+  if (escaped) {
+    handleEscape();
+  }
 }
 
 function drawBackground() {
@@ -319,6 +337,14 @@ function drawEnemy() {
     ctx.fillRect(-shoe.size / 2, -shoe.size / 3, shoe.size, shoe.size / 1.6);
     ctx.restore();
   });
+
+  if (enemySprite.complete) {
+    ctx.drawImage(enemySprite, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
+    return;
+  }
+
+  ctx.fillStyle = '#d1d5db';
+  ctx.fillRect(enemy.x - half, enemy.y - half, enemy.size, enemy.size);
 }
 
 function draw() {
@@ -358,4 +384,15 @@ window.addEventListener('keyup', (event) => {
 restartBtn.addEventListener('click', fullRestart);
 
 fullRestart();
+window.addEventListener('keydown', (event) => {
+  keys.add(event.key.toLowerCase());
+});
+
+window.addEventListener('keyup', (event) => {
+  keys.delete(event.key.toLowerCase());
+});
+
+restartBtn.addEventListener('click', restartGame);
+
+restartGame();
 requestAnimationFrame(gameLoop);
